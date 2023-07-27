@@ -1,108 +1,84 @@
-var button = document.querySelector('input[type="button"]');
-button.addEventListener('click', addExpense);
-
-function addExpense(e) {
-    e.preventDefault();
-    // Getting the values
-    var expenseValue = document.getElementById('amount').value;
-    var category = document.getElementById('category').selectedOptions[0].text;
-    var description = document.getElementById('description').value;
-
-    // Creating the display string
-    var str = expenseValue + " - " + category + " - " + description + " ";
-
-    // Creating buttons
-    var deleteItem = document.createElement('button');
-    deleteItem.textContent = 'Delete Item';
-
-    var editItem = document.createElement('button');
-    editItem.textContent = 'Edit Item';
-
-    // Create an ul item
-    var ul = document.createElement('ul');
-    var li = document.createElement('li');
-
-    // Adding all together
-    li.textContent = str;
-
-    // Adding buttons to li
-    li.appendChild(deleteItem);
-    li.appendChild(editItem);
-
-    // Adding li to ul
-    ul.appendChild(li);
-
-    // Adding ul to the HTML body
-    document.body.appendChild(ul);
-
-    // Make the delete button working
-    deleteItem.addEventListener('click', removeItem);
-
-    // Add edit button functionality
-    editItem.addEventListener('click', function () {
-        var li = this.parentNode;
-        var liData = li.textContent.split(' - ');
-
-        var form = document.createElement('form');
-
-        var amountInput = document.createElement('input');
-        amountInput.type = 'text';
-        amountInput.name = 'amount';
-        amountInput.value = liData[0];
-
-        var categoryInput = document.createElement('input');
-        categoryInput.type = 'text';
-        categoryInput.name = 'category';
-        categoryInput.value = liData[1];
-
-        var descriptionInput = document.createElement('textarea');
-        descriptionInput.name = 'description';
-        descriptionInput.textContent = liData[2];
-
-        var saveButton = document.createElement('button');
-        saveButton.type = 'submit';
-        saveButton.textContent = 'Save';
-
-        form.appendChild(amountInput);
-        form.appendChild(categoryInput);
-        form.appendChild(descriptionInput);
-        form.appendChild(saveButton);
-
-        // Replace li element with the form
-        li.innerHTML = '';
-        li.appendChild(form);
-
-        // Add form submit event listener
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            // Get form data
-            var expenseValue = form.elements.amount.value;
-            var category = form.elements.category.value;
-            var description = form.elements.description.value;
-
-            // Update li element with new data
-            var newStr = expenseValue + " - " + category + " - " + description;
-            li.textContent = newStr;
-
-            // Recreate delete and edit buttons
-            li.appendChild(deleteItem);
-            li.appendChild(space1.cloneNode());
-            li.appendChild(editItem);
-
-            // Make the delete button working
-            deleteItem.addEventListener('click', removeItem);
-
-            // Add edit button functionality again
-            editItem.addEventListener('click', function () {
-                // Rest of the edit button functionality here
-            });
-        });
-    });
-}
-
-function removeItem(e) {
-    var li = e.target.parentNode;
-    var ul = li.parentNode;
-    ul.removeChild(li);
-}
+// Function to add an expense item
+function addExpense() {
+    const amount = document.getElementById("amount").value;
+    const description = document.getElementById("description").value;
+    const category = document.getElementById("category").value;
+  
+    if (amount && description && category) {
+      const expenseItem = document.createElement("li");
+      expenseItem.classList.add("expense-item");
+  
+      const deleteButton = document.createElement("button");
+      deleteButton.innerText = "Delete";
+      deleteButton.addEventListener("click", deleteExpense);
+  
+      const editButton = document.createElement("button");
+      editButton.innerText = "Edit";
+      editButton.addEventListener("click", () => editExpense(expenseItem));
+  
+      const expenseInfo = document.createElement("span");
+      expenseInfo.innerHTML = `<strong>Amount:</strong> ${amount}, <strong>Description:</strong> ${description}, <strong>Category:</strong> ${category}`;
+  
+      expenseItem.appendChild(expenseInfo);
+      expenseItem.appendChild(deleteButton);
+      expenseItem.appendChild(editButton);
+  
+      document.getElementById("expense-list").appendChild(expenseItem);
+    }
+  }
+  
+  // Function to delete an expense item
+  function deleteExpense(event) {
+    const item = event.target.parentNode;
+    item.remove();
+  }
+  
+  // Function to edit an expense item
+  function editExpense(item) {
+    const expenseInfo = item.querySelector("span");
+    const [amount, description, category] = expenseInfo.innerText.match(/\d+(\.\d{1,2})?|\D+/g);
+  
+    const editForm = document.createElement("form");
+    editForm.innerHTML = `
+      <label for="editAmount">Amount:</label>
+      <input type="number" id="editAmount" value="${amount}" required>
+      
+      <label for="editDescription">Description:</label>
+      <input type="text" id="editDescription" value="${description}" required>
+      
+      <label for="editCategory">Category:</label>
+      <select id="editCategory" required>
+        <option value="fuel" ${category.trim() === 'Fuel' ? 'selected' : ''}>Fuel</option>
+        <option value="food" ${category.trim() === 'Food' ? 'selected' : ''}>Food</option>
+        <option value="electricity" ${category.trim() === 'Electricity' ? 'selected' : ''}>Electricity</option>
+        <option value="movie" ${category.trim() === 'Movie' ? 'selected' : ''}>Movie</option>
+      </select>
+  
+      <button type="button" onclick="saveEdit(this.parentNode.parentNode)">Save</button>
+    `;
+  
+    expenseInfo.style.display = "none";
+    item.appendChild(editForm);
+  }
+  
+  // Function to save edited expense item
+  function saveEdit(formItem) {
+    const expenseInfo = formItem.querySelector("span");
+    const editForm = formItem.querySelector("form");
+  
+    const editedAmount = editForm.querySelector("#editAmount").value;
+    const editedDescription = editForm.querySelector("#editDescription").value;
+    const editedCategory = editForm.querySelector("#editCategory").value;
+  
+    if (editedAmount && editedDescription && editedCategory) {
+      expenseInfo.innerHTML = `<strong>Amount:</strong> ${editedAmount}, <strong>Description:</strong> ${editedDescription}, <strong>Category:</strong> ${editedCategory}`;
+      expenseInfo.style.display = "inline";
+  
+      formItem.removeChild(editForm);
+    }
+  }
+  
+  // Add click event listener to the "Add Expense" button
+  const addButton = document.querySelector("input[type='button']");
+  addButton.addEventListener("click", addExpense);
+  

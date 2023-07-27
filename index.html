@@ -5,6 +5,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        /* Style for expense items in the list */
+        ul#expense-list li {
+            margin-bottom: 5px;
+        }
+
+        /* Style for the edit form */
+        ul#expense-list li form {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        /* Add some spacing between form elements */
+        ul#expense-list li form label {
+            margin-right: 5px;
+        }
+
+        /* Style for the buttons (Delete and Edit) */
+        ul#expense-list li button {
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -20,6 +42,9 @@
         <input type="button" value="Add Expense">
     </div>
 
-    <script src="script.js"></script>
+    <ul id="expense-list"></ul>
+
+    <script src="script.js">
+    </script>
 </body>
 </html>
